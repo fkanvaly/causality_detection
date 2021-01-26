@@ -1,0 +1,6 @@
+streamlit==0.72.0
+pandas==1.1.4
+numpy==1.19.4
+tqdm==4.50.2
+networkx==2.5
+scipy==1.5.4
