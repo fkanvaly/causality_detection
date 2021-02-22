@@ -37,8 +37,8 @@ class BayesianNetwork:
             n = 2 ** n_par  # number of combinations
             binaries = [f"%0{n_par}d" % int(format(i, f'#0{n}b')[2:]) for i in range(n)]  # write in binary
             combination = {parent[i]: [int(b[i]) for b in binaries] for i in range(len(parent))}
-            combination[node_1] = [0] * n
             combination[node_0] = [0] * n
+            combination[node_1] = [0] * n
             cpd = pd.DataFrame.from_dict(combination)
             cpd = cpd.set_index(parent)
             return parent, cpd
@@ -77,6 +77,12 @@ class BayesianNetwork:
         cpd[node_0] = cpd_count.apply(
             lambda x: 0 if x[node_1] + x[node_0] == 0 else x[node_0] / (x[node_1] + x[node_0]), axis=1)
         return par, cpd
+
+    def _set_cpd(self, node, cpd):
+        self.G.nodes(data=True)[node]["cpd"] = cpd
+
+    def __call__(self, *args, **kwargs):
+        return self.G.edges()
 
     def set_cpd(self, node: str, cpd_prob: list, parent: list):
         """
@@ -133,26 +139,26 @@ class BayesianNetwork:
                 if len(dependancies[node]['par']) == 0:
                     prob_1, prob_0 = cpd[node_1][cpd.index[0]], cpd[node_0][cpd.index[0]]
                 else:
-                    select = tuple(evidence[p][0] for p in par)
+                    select = tuple(evidence[p] for p in par)
                     prob = cpd.loc[select]
                     prob_1, prob_0 = prob[node_1], prob[node_0]
 
-                evidence[node] = [np.random.choice([1, 0], p=[prob_1, prob_0])]
+                evidence[node] = np.random.choice([1, 0], p=[prob_1, prob_0])
                 node_available = node_available | {node}
                 to_compute = to_compute - {node}
 
         assert len(to_compute) == 0, "not every node have been sample"
 
-        return pd.DataFrame(evidence)
+        return pd.DataFrame({k: [v] for k, v in evidence.items()})
 
     def sample(self, size=20):
         df = pd.DataFrame({node: [] for node in sorted(self.G.nodes())}).astype(int)
-        for i in range(size):
+        for _ in tqdm(range(size)):
             df = pd.concat((df, self._sample()))
         df.reset_index(drop=True, inplace=True)
         return df
 
-    def do(self, evidence=None, size=100, seed=12):
+    def do_evidence(self, evidence=None, size=100, seed=12):
         np.random.seed(seed)
 
         if evidence is None:
@@ -160,6 +166,16 @@ class BayesianNetwork:
 
         df = pd.DataFrame({node: [] for node in sorted(self.G.nodes())}).astype(int)
         for i in range(size):
-            df = pd.conname((df, self._sample(evidence)))
+            df = pd.concat((df, self._sample(evidence)))
+        df.reset_index(drop=True, inplace=True)
+
+        return df
+
+    def do(self, node, size=15):
+        n_node = len(node)
+        n = 2 ** n_node  # number of combinations
+        binaries = [f"%0{n_node}d" % int(format(i, f'#0{n}b')[2:]) for i in range(n)]  # write in binary
+        combination = [{node[i]: int(b[i]) for i in range(len(node))} for b in binaries]
+        df = pd.concat([self.do_evidence(evidence=ev, size=size) for ev in combination])
         df.reset_index(drop=True, inplace=True)
         return df

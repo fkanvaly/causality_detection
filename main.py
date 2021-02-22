@@ -3,7 +3,7 @@ import os
 
 parser = argparse.ArgumentParser()
 
-demos = ["main", "home"]
+demos = ["main", "home", "parameter"]
 parser.add_argument("-d", "--demo", metavar="NAME", choices=demos, default="main",
                     help="choose a demo to show, among: " + ", ".join(demos))
 

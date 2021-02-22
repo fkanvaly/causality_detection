@@ -1,10 +1,15 @@
 import streamlit as st
+from graphviz import Digraph
+import sys
+
+sys.path.append("./")
+
+from ocik.example import Asia
 
 
 def app():
-
     st.write(r'''
-    ## 3. Apprentissage des paramètres
+    ## Apprentissage des paramètres
 
     Imaginons qu'on ait construit un réseau Bayésien représentant notre modèle causale, la prochaine étape consiste à
     remplir les tables de probabilité conditionnelle. Une façon de faire cela est de rechercher le meilleur jeu de
@@ -18,9 +23,23 @@ def app():
     - **Le Maximum à Priori**: Utilise les résultats du maximum de vraisemblance pour construire une distribution à
     posteriori.
 
-    Nous allons tester les méthodes d'apprentissages sur un reseau baysien dont les noeuds correspondes aux résulats de
-    porte logique.
+    Nous allons tester les méthodes d'apprentissages sur un reseau baysien à partir des données. 
     ''')
+
+    # Load th data
+    asia = Asia()
+
+    # bn = asia.get_network()
+    # f = Digraph()
+    # f.edges(bn.G.edges())
+    # st.graphviz_chart(f.source)
+    #
+    # # Generate data
+    # st.write(r"""
+    # D'abord nous allons générer des données à partir du reseau bayesien.
+    # """)
+    # df = asia.load_data(nrows=1000)
+    # st.write(df.head())
 
 
 if __name__ == '__main__':
