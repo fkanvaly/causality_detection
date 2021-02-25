@@ -1,4 +1,4 @@
-from ocik.example import Asia, Room
+from ocik.example import Asia, Room, Circuit
 from ocik.structure.doPC import doPC
 from graphviz import Digraph, Graph, Source
 
@@ -9,15 +9,16 @@ def draw(edge, directed=True):
     return dot
 
 
-asia = Asia()
-df = asia.load_data(1000)
+network = Asia()
+bn = network.bn
+df = bn.sample(2)
 
 orientation = set()
 estimator = doPC(data=df)
 model = estimator.estimate(variant='stable', max_cond_vars=4,
                            ci_test="do_ci",
                            do_node=df.columns,
-                           env=asia.bn,
+                           env=bn,
                            orientation=orientation,
                            )
 

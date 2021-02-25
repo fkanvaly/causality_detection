@@ -98,6 +98,19 @@ class doPC(StructureEstimator):
 
             elif lim_neighbors > 0:
                 print("conditional influence")
+                influence = {}
+                for node in graph.nodes():
+                    neigh = set(graph.neighbors(node))
+                    all_sep_set = set()
+                    for v in neigh:
+                        all_sep_set = all_sep_set | set(combinations(set(graph.neighbors(node)) - {v}, lim_neighbors))
+
+                    influence[node] = {}
+                    for sep_set in list(all_sep_set):
+                        on = neigh - set(sep_set)
+                        if len(on) > 0:
+                            influence[node][sep_set] = has_influence(node, list(on), sep_set, kwargs['env'])
+
                 edges = list(graph.edges())
                 for (X, Y) in edges:
                     for separating_set in list(
@@ -105,7 +118,14 @@ class doPC(StructureEstimator):
                     ):
                         # If a conditioning set exists remove the edge, store the
                         # separating set and move on to finding conditioning set for next edge.
+                        the_sep_set = None
+                        for sep_set in influence[X].keys():
+                            if set(sep_set) == set(separating_set):
+                                x_set = sep_set
+                                break
 
+                        assert the_sep_set is not None
+                        if influence[]
                         if ci_test(
                                 X,
                                 Y,

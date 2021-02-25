@@ -32,7 +32,7 @@ def simulate(query_node: str, watch_nodes: list, env, do_size=100, same_seed=Tru
 
     for i, evidence in enumerate(evidences):
         seed = 0 if same_seed else i
-        do_result = env.do(evidence=evidence, size=do_size, seed=seed)
+        do_result = env.do_evidence(evidence=evidence, size=do_size, seed=seed)
 
         ev = evidence[query_node]
         result[ev] = {}
