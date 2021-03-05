@@ -17,10 +17,13 @@ class BayesianNetwork:
         self.node_sort = list(nx.topological_sort(self.G))
         self.name = lambda k, v: f"{k}={v}"  # pour nommer les variables
         self.initialize_cpd()
-    
-    def get_network(self, data=True):
-        return self.G.nodes(data=data)
-    
+
+    def nodes(self):
+        return list(self.G.nodes())
+
+    def edges(self):
+        return list(self.G.edges())
+
     def _build_cpd(self, node: str):
         """
         create the cpd table for a node in the graph
@@ -116,6 +119,9 @@ class BayesianNetwork:
         return bn
 
     def _sample(self, evidence: dict = None):
+        """
+        generate one simulation data. propagate data from node without parent to all the network
+        """
         if evidence is None:
             evidence = {}
         else:
@@ -152,6 +158,7 @@ class BayesianNetwork:
         return pd.DataFrame({k: [v] for k, v in evidence.items()})
 
     def sample(self, size=20):
+
         df = pd.DataFrame({node: [] for node in sorted(self.G.nodes())}).astype(int)
         for _ in tqdm(range(size)):
             df = pd.concat((df, self._sample()))

@@ -2,44 +2,35 @@ import streamlit as st
 from graphviz import Digraph
 import sys
 
+from PIL import Image
+
 sys.path.append("./")
 
 from ocik.example import Asia
 
 
 def app():
-    st.write(r'''
-    ## Apprentissage des paramètres
+    st.write(r"""
+    ## Learn parameter
+    
+    Let's imagine that we have built a Bayesian network representing our causal model, the next step consists in fill in 
+    the conditional probability tables. One way to do this is to look for the best set of parameters to report the 
+    observed data. 
+    
+    There are two approaches to calculating the parameters:
+    
+    - **Maximum likelihood**: which considers the parameters as constants and tries to determine them by maximizing the 
+    likelihood. 
+    
+    - **The Maximum to Priori**: Uses the results of maximum likelihood to construct a posteriori distribution.
+    
+    
+    Parameter learning can be resume to counting variable value given their parent value and compute a probability 
+    from it. We improve this counting process with our do-operator. Let's take a simple example to illustrate how we 
+    improve this learning through our data augmentation. """)
 
-    Imaginons qu'on ait construit un réseau Bayésien représentant notre modèle causale, la prochaine étape consiste à
-    remplir les tables de probabilité conditionnelle. Une façon de faire cela est de rechercher le meilleur jeu de
-    paramètres pour rendre compte des données observées.
-
-    Il existe deux approches pour calculer les paramètres :
-
-    - **Le Maximum de vraisemblence**: qui cosidère les paramètres comme des constantes et cherches à les determiner en
-    maximixant la vraisemblance
-
-    - **Le Maximum à Priori**: Utilise les résultats du maximum de vraisemblance pour construire une distribution à
-    posteriori.
-
-    Nous allons tester les méthodes d'apprentissages sur un reseau baysien à partir des données. 
-    ''')
-
-    # Load th data
-    asia = Asia()
-
-    # bn = asia.get_network()
-    # f = Digraph()
-    # f.edges(bn.G.edges())
-    # st.graphviz_chart(f.source)
-    #
-    # # Generate data
-    # st.write(r"""
-    # D'abord nous allons générer des données à partir du reseau bayesien.
-    # """)
-    # df = asia.load_data(nrows=1000)
-    # st.write(df.head())
+    image = Image.open('ocik/demo/media/parameter.png')
+    st.image(image, use_column_width=True)
 
 
 if __name__ == '__main__':

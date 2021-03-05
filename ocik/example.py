@@ -67,14 +67,13 @@ class Room:
 
 class Circuit:
     def __init__(self):
-        fn = lambda k, v: f"{k}={v}"
         ed = lambda a, b: [f'x{a}', f'x{b}']
 
         bn = BayesianNetwork([ed(1, 4), ed(4, 8), ed(8, 9), ed(9, 11),
                               ed(2, 5), ed(2, 6), ed(6, 8), ed(6, 10), ed(10, 11),
                               ed(3, 5), ed(5, 6), ed(5, 7), ed(7, 10)])
 
-        from ocik.porte import f_and, f_nand, f_nor, f_not, f_or, f_xor
+        from ocik.utils import f_and, f_nand, f_nor, f_not, f_or, f_xor
 
         def fill(x, gate):
             val = int(x.name.split("=")[1])
@@ -95,3 +94,6 @@ class Circuit:
             bn._set_cpd(node, cpd)
 
         self.bn = bn
+
+    def get_network(self):
+        return self.bn
